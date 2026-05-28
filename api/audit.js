@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
 Analyse the brand at: ${cleanUrl}
 
-Respond ONLY with valid JSON, no markdown, no explanation, no code blocks:
+Respond ONLY with valid JSON, no markdown, no explanation, no code blocks. Just raw JSON:
 {
   "brandName": "Full brand name",
   "industry": "Specific industry e.g. Performance Apparel",
@@ -30,7 +30,7 @@ Respond ONLY with valid JSON, no markdown, no explanation, no code blocks:
     {
       "channel": "Paid Media",
       "severity": "high",
-      "title": "Specific, concrete finding title",
+      "title": "Specific concrete finding title",
       "detail": "Two sentences. First: the specific gap. Second: the opportunity for OPTYO to add value."
     },
     {
@@ -55,32 +55,41 @@ Respond ONLY with valid JSON, no markdown, no explanation, no code blocks:
   "topPriority": "One sentence naming the single highest-leverage fix for this specific brand.",
   "outreachEmail": {
     "subject": "Compelling subject line referencing a specific finding",
-    "body": "Hi [First Name],\\n\\nI took a look at ${cleanUrl} — [one specific observation that shows you actually looked].\\n\\n[2-3 sentences referencing 2 specific findings by name. Be concrete, not generic.]\\n\\nI put together a quick audit covering paid, email, SEO, and site. Happy to walk you through it on a short call.\\n\\nWorth 20 minutes?\\n\\n[Your name]\\nOPTYO"
+    "body": "Hi [First Name],\n\nI took a look at ${cleanUrl} — [one specific observation that shows you actually looked].\n\n[2-3 sentences referencing 2 specific findings by name. Be concrete, not generic.]\n\nI put together a quick audit covering paid, email, SEO, and site. Happy to walk you through it on a short call.\n\nWorth 20 minutes?\n\n[Your name]\nOPTYO"
   }
 }`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1200,
-        messages: [{ role: 'user', content: prompt }]
+        model: 'llama-3.3-70b-versatile',
+        temperature: 0.7,
+        max_tokens: 1500,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a marketing audit engine. You always respond with valid raw JSON only. No markdown. No explanation. No code blocks. Just the JSON object.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
       })
     });
 
     if (!response.ok) {
       const err = await response.text();
-      return res.status(500).json({ error: 'AI request failed', detail: err });
+      return res.status(500).json({ error: 'Groq request failed', detail: err });
     }
 
     const data = await response.json();
-    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const text = data.choices[0].message.content.trim();
 
     let audit;
     try {
@@ -95,4 +104,3 @@ Respond ONLY with valid JSON, no markdown, no explanation, no code blocks:
     return res.status(500).json({ error: err.message });
   }
 }
-
