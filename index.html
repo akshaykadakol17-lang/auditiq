@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuditIQ — Marketing Audit Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #0c0c0a;
+  --ink2: #2e2e2b;
+  --ink3: #5c5c57;
+  --ink4: #9a9a94;
+  --line: #e4e4de;
+  --bg: #f6f6f2;
+  --white: #ffffff;
+  --blue: #1847a3;
+  --blue-bg: #edf3ff;
+  --blue-mid: #3567d4;
+  --blue-border: #bdd0f7;
+  --blue-dark: #0d3380;
+  --green: #0f6040;
+  --green-bg: #ecfaf3;
+  --green-border: #9fd9c0;
+  --amber: #6e4000;
+  --amber-bg: #fff7eb;
+  --amber-border: #f0cb7a;
+  --red: #8f1f1f;
+  --red-bg: #fff0f0;
+  --red-border: #f0b0b0;
+  --display: 'Syne', sans-serif;
+  --body: 'Instrument Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  height: 56px;
+  background: rgba(246,246,242,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-logo {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--ink); display: flex; align-items: center; justify-content: center;
+}
+.nav-logo svg { width: 16px; height: 16px; }
+.nav-wordmark { font-family: var(--display); font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+.nav-pill {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 20px;
+  background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border);
+}
+.nav-right { font-size: 12px; color: var(--ink4); }
+
+/* ─── HERO ─── */
+.hero {
+  background: var(--ink);
+  padding: 6rem 2rem 5rem;
+}
+.hero-inner { max-width: 900px; margin: 0 auto; }
+.hero-kicker {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 2rem;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+.hero-kicker-line { width: 24px; height: 1px; background: rgba(255,255,255,0.2); }
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 700; line-height: 1.05; letter-spacing: -0.03em;
+  color: white; margin-bottom: 1.5rem;
+}
+.hero h1 .dim { color: rgba(255,255,255,0.35); font-weight: 400; }
+.hero-desc {
+  font-size: 16px; color: rgba(255,255,255,0.55);
+  max-width: 480px; line-height: 1.75; margin-bottom: 3.5rem;
+}
+.hero-divider { height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 2.5rem; }
+.hero-stats { display: flex; gap: 3.5rem; flex-wrap: wrap; }
+.hs { }
+.hs-num {
+  font-family: var(--display); font-size: 2rem; font-weight: 700;
+  color: white; line-height: 1; margin-bottom: 5px;
+}
+.hs-label { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+/* ─── PIPELINE ─── */
+.pipeline-wrap {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.pipeline {
+  max-width: 900px; margin: 0 auto;
+  display: flex; align-items: stretch;
+}
+.ps {
+  flex: 1; padding: 16px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  border-bottom: 2px solid transparent;
+  position: relative; transition: all 0.25s;
+}
+.ps + .ps::before {
+  content: '';
+  position: absolute; left: 0; top: 20%; height: 60%;
+  width: 1px; background: var(--line);
+}
+.ps.active { border-bottom-color: var(--blue); }
+.ps.done { border-bottom-color: var(--green); }
+.ps-n { font-size: 10px; font-weight: 500; color: var(--ink4); letter-spacing: 0.04em; }
+.ps.active .ps-n { color: var(--blue); }
+.ps.done .ps-n { color: var(--green); }
+.ps-l { font-size: 12px; font-weight: 500; color: var(--ink3); }
+.ps.active .ps-l { color: var(--blue); }
+.ps.done .ps-l { color: var(--green); }
+
+/* ─── MAIN ─── */
+.main { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+/* INPUT */
+.input-block { margin-bottom: 2.5rem; }
+.input-lbl {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink4); margin-bottom: 10px;
+}
+.input-row { display: flex; gap: 10px; }
+.url-inp {
+  flex: 1; height: 52px; padding: 0 18px;
+  border: 1.5px solid var(--line); border-radius: var(--radius);
+  font-family: var(--body); font-size: 15px;
+  background: var(--white); color: var(--ink); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.url-inp:focus { border-color: var(--blue-mid); box-shadow: 0 0 0 4px rgba(53,103,212,0.1); }
+.url-inp::placeholder { color: var(--ink4); }
+.run-btn {
+  height: 52px; padding: 0 28px;
+  background: var(--ink); color: white;
+  border: none; border-radius: var(--radius);
+  font-family: var(--display); font-size: 14px; font-weight: 600;
+  letter-spacing: -0.01em; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  white-space: nowrap; transition: background 0.15s, transform 0.1s;
+}
+.run-btn:hover { background: var(--blue); }
+.run-btn:active { transform: scale(0.98); }
+.run-btn:disabled { background: var(--ink4); cursor: not-allowed; transform: none; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; align-items: center; }
+.chips-label { font-size: 12px; color: var(--ink4); margin-right: 2px; }
+.chip {
+  font-size: 12px; padding: 5px 13px; border-radius: 20px;
+  border: 1px solid var(--line); background: var(--white); color: var(--ink3);
+  cursor: pointer; transition: all 0.15s; font-family: var(--body);
+}
+.chip:hover { border-color: var(--blue-mid); color: var(--blue); background: var(--blue-bg); }
+
+/* STATUS */
+.status {
+  display: none; align-items: center; gap: 12px;
+  padding: 14px 18px; border-radius: var(--radius);
+  background: var(--white); border: 1px solid var(--line);
+  font-size: 13px; color: var(--ink3); margin-bottom: 1.5rem;
+}
+.status.show { display: flex; }
+.spin {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--line); border-top-color: var(--blue);
+  animation: spin 0.65s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.err {
+  padding: 14px 18px; border-radius: var(--radius);
+  background: var(--red-bg); border: 1px solid var(--red-border);
+  color: var(--red); font-size: 13px; display: none; margin-bottom: 1.5rem;
+}
+.err.show { display: block; }
+
+/* RESULTS */
+.results { display: none; }
+.results.show { display: block; animation: fadeUp 0.3s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* BRAND CARD */
+.brand-card {
+  background: var(--white); border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;
+}
+.brand-left { display: flex; align-items: center; gap: 16px; }
+.brand-avatar {
+  width: 54px; height: 54px; border-radius: 12px;
+  background: var(--ink); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 18px; font-weight: 700;
+  letter-spacing: -0.02em; flex-shrink: 0;
+}
+.brand-name { font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: -0.03em; }
+.brand-meta { font-size: 13px; color: var(--ink3); margin-top: 3px; }
+.brand-score-wrap { text-align: right; }
+.brand-score {
+  font-family: var(--display); font-size: 3.5rem; font-weight: 700;
+  letter-spacing: -0.05em; line-height: 1;
+}
+.brand-score-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink4); margin-top: 4px; }
+
+/* SCORE ROW */
+.score-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1rem; }
+.sc {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1.1rem 1rem;
+  position: relative; overflow: hidden;
+}
+.sc::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+.sc.red::after { background: var(--red); }
+.sc.amber::after { background: #d4700a; }
+.sc.green::after { background: var(--green); }
+.sc-lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink4); margin-bottom: 6px; }
+.sc-val { font-family: var(--display); font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.sc.red .sc-val { color: var(--red); }
+.sc.amber .sc-val { color: #6e4000; }
+.sc.green .sc-val { color: var(--green); }
+.sc-bar { height: 3px; background: var(--line); border-radius: 2px; margin-top: 10px; }
+.sc-fill { height: 100%; border-radius: 2px; }
+.sc.red .sc-fill { background: var(--red); }
+.sc.amber .sc-fill { background: #d4700a; }
+.sc.green .sc-fill { background: var(--green); }
+
+/* PRIORITY STRIP */
+.priority-strip {
+  background: var(--ink); color: white;
+  border-radius: var(--radius-lg); padding: 1.4rem 1.5rem;
+  display: flex; align-items: flex-start; gap: 14px;
+  margin-bottom: 1rem;
+}
+.priority-icon-wrap {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.priority-lbl { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
+.priority-text { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.65; }
+
+/* FINDINGS */
+.card {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem;
+}
+.card-hd {
+  padding: 13px 18px; border-bottom: 1px solid var(--line);
+  background: #fafaf6;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--ink3);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.finding {
+  display: flex; gap: 14px; padding: 16px 18px;
+  border-bottom: 1px solid var(--line); transition: background 0.12s;
+}
+.finding:last-child { border-bottom: none; }
+.finding:hover { background: var(--bg); }
+.f-badge {
+  width: 34px; height: 34px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+.f-badge.high { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.f-badge.medium { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.f-badge.low { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.f-ch { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink4); margin-bottom: 3px; }
+.f-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sev {
+  font-size: 10px; font-weight: 500; padding: 2px 8px;
+  border-radius: 4px; letter-spacing: 0.03em;
+}
+.sev.high { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.sev.medium { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.sev.low { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.f-desc { font-size: 13px; color: var(--ink3); line-height: 1.65; }
+
+/* EMAIL CARD */
+.email-subj {
+  padding: 14px 18px; background: #fafaf6;
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 12px;
+}
+.email-subj-lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink4); flex-shrink: 0; }
+.email-subj-val { font-size: 14px; font-weight: 500; color: var(--ink); }
+.email-body-wrap { padding: 20px 18px; }
+.email-body { font-size: 13px; line-height: 1.85; color: var(--ink2); white-space: pre-wrap; font-family: var(--body); }
+.email-actions {
+  padding: 14px 18px; border-top: 1px solid var(--line);
+  background: #fafaf6; display: flex; gap: 8px;
+}
+.btn {
+  height: 36px; padding: 0 16px; border-radius: 7px;
+  font-family: var(--body); font-size: 13px; font-weight: 500;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: all 0.15s; border: 1px solid var(--line);
+  background: var(--white); color: var(--ink2);
+}
+.btn:hover { border-color: var(--ink3); color: var(--ink); }
+.btn.primary { background: var(--ink); color: white; border-color: var(--ink); }
+.btn.primary:hover { background: var(--blue); border-color: var(--blue); }
+.btn.copied { background: var(--green); border-color: var(--green); color: white; }
+
+/* DISCLAIMER */
+.disclaimer {
+  margin-top: 1.5rem; padding: 14px 18px;
+  background: var(--blue-bg); border: 1px solid var(--blue-border);
+  border-radius: var(--radius); font-size: 13px; color: var(--blue-dark);
+  line-height: 1.6;
+}
+.disclaimer strong { font-weight: 500; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem; text-align: center;
+  font-size: 12px; color: var(--ink4);
+  max-width: 900px; margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .score-row { grid-template-columns: repeat(2, 1fr); }
+  .hero h1 { font-size: 2.2rem; }
+  .hero-stats { gap: 2rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/>
+        <path d="M8 4.5V8L10.5 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="nav-wordmark">AuditIQ</span>
+    <span class="nav-pill">Prototype</span>
+  </div>
+  <div class="nav-right">Built by Akshay Kadakol · OPTYO Scoping</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">
+      <span class="hero-kicker-line"></span>
+      AI-powered sales prospecting
+    </div>
+    <h1>Turn any URL into<br><span class="dim">a qualified</span> sales conversation.</h1>
+    <p class="hero-desc">Enter a brand's website. AuditIQ analyses their marketing across paid, email, SEO, and web — then generates a scored audit and a ready-to-send outreach email in seconds.</p>
+    <div class="hero-divider"></div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-num">4</div><div class="hs-label">Channels analysed</div></div>
+      <div class="hs"><div class="hs-num">&lt;30s</div><div class="hs-label">Per audit</div></div>
+      <div class="hs"><div class="hs-num">0</div><div class="hs-label">Manual steps</div></div>
+      <div class="hs"><div class="hs-num">∞</div><div class="hs-label">Scalable</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="pipeline-wrap">
+  <div class="pipeline">
+    <div class="ps" id="ps1"><span class="ps-n">01</span><span class="ps-l">URL input</span></div>
+    <div class="ps" id="ps2"><span class="ps-n">02</span><span class="ps-l">Brand scan</span></div>
+    <div class="ps" id="ps3"><span class="ps-n">03</span><span class="ps-l">AI audit</span></div>
+    <div class="ps" id="ps4"><span class="ps-n">04</span><span class="ps-l">Email draft</span></div>
+    <div class="ps" id="ps5"><span class="ps-n">05</span><span class="ps-l">Report ready</span></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="input-block">
+    <div class="input-lbl">Brand website URL</div>
+    <div class="input-row">
+      <input class="url-inp" id="urlInput" type="text" placeholder="e.g. gymshark.com, nobull.com, whoop.com" />
+      <button class="run-btn" id="runBtn" onclick="runAudit()">Run audit &nbsp;→</button>
+    </div>
+    <div class="chips">
+      <span class="chips-label">Try a brand:</span>
+      <span class="chip" onclick="go('gymshark.com')">Gymshark</span>
+      <span class="chip" onclick="go('hims.com')">Hims</span>
+      <span class="chip" onclick="go('nobull.com')">Nobull</span>
+      <span class="chip" onclick="go('ritual.com')">Ritual</span>
+      <span class="chip" onclick="go('whoop.com')">Whoop</span>
+      <span class="chip" onclick="go('gorewear.com')">Gorewear</span>
+      <span class="chip" onclick="go('vuoriclothing.com')">Vuori</span>
+    </div>
+  </div>
+
+  <div class="status" id="statusBar">
+    <div class="spin"></div>
+    <span id="statusTxt">Analysing brand presence...</span>
+  </div>
+
+  <div class="err" id="errBox"></div>
+  <div class="results" id="results"></div>
+
+</div>
+
+<footer>
+  AuditIQ is a proof-of-concept prototype demonstrating the core pipeline. Production version runs inside n8n with Monday.com triggers, real web scraping, and PDF generation. · Built by Akshay Kadakol
+</footer>
+
+<script>
+function go(u) { document.getElementById('urlInput').value = u; }
+
+function setStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('ps' + i);
+    if (i < n) { el.className = 'ps done'; el.querySelector('.ps-n').textContent = '✓'; }
+    else if (i === n) { el.className = 'ps active'; el.querySelector('.ps-n').textContent = '0' + i; }
+    else { el.className = 'ps'; el.querySelector('.ps-n').textContent = '0' + i; }
+  }
+}
+
+function sc(n) { return n >= 70 ? 'green' : n >= 50 ? 'amber' : 'red'; }
+function scColor(n) { return n >= 70 ? '#0f6040' : n >= 50 ? '#6e4000' : '#8f1f1f'; }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function runAudit() {
+  const raw = document.getElementById('urlInput').value.trim();
+  if (!raw) return;
+  const url = raw.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('statusBar').className = 'status show';
+  document.getElementById('results').className = 'results';
+  document.getElementById('errBox').className = 'err';
+  setStep(1);
+
+  try {
+    document.getElementById('statusTxt').textContent = 'Identifying brand and market category...';
+    setStep(2); await sleep(600);
+
+    document.getElementById('statusTxt').textContent = 'Running audit across paid, email, SEO, and web...';
+    setStep(3);
+
+    const resp = await fetch('/api/audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+
+    if (!resp.ok) {
+      const e = await resp.json();
+      throw new Error(e.error || 'Request failed');
+    }
+
+    const audit = await resp.json();
+
+    document.getElementById('statusTxt').textContent = 'Drafting personalised outreach email...';
+    setStep(4); await sleep(500);
+
+    setStep(5);
+    document.getElementById('statusTxt').textContent = 'Audit complete.';
+    await sleep(350);
+    document.getElementById('statusBar').className = 'status';
+
+    render(audit, url);
+
+  } catch (err) {
+    document.getElementById('statusBar').className = 'status';
+    const e = document.getElementById('errBox');
+    e.textContent = 'Something went wrong: ' + err.message;
+    e.className = 'err show';
+    setStep(1);
+  }
+
+  document.getElementById('runBtn').disabled = false;
+}
+
+function render(a, url) {
+  const initials = a.brandName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  const oc = sc(a.overallScore);
+
+  const channels = [
+    { lbl: 'Paid media', val: a.scores.paidMedia },
+    { lbl: 'Email', val: a.scores.emailMarketing },
+    { lbl: 'SEO', val: a.scores.seo },
+    { lbl: 'Website', val: a.scores.website }
+  ];
+
+  const scHtml = channels.map(c => `
+    <div class="sc ${sc(c.val)}">
+      <div class="sc-lbl">${c.lbl}</div>
+      <div class="sc-val">${c.val}</div>
+      <div class="sc-bar"><div class="sc-fill" style="width:${c.val}%"></div></div>
+    </div>`).join('');
+
+  const icon = s => s === 'high' ? '!' : s === 'medium' ? '~' : '✓';
+
+  const findingsHtml = a.findings.map(f => `
+    <div class="finding">
+      <div class="f-badge ${f.severity}">${icon(f.severity)}</div>
+      <div>
+        <div class="f-ch">${f.channel}</div>
+        <div class="f-title">${f.title}<span class="sev ${f.severity}">${f.severity}</span></div>
+        <div class="f-desc">${f.detail}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('results').innerHTML = `
+    <div class="brand-card">
+      <div class="brand-left">
+        <div class="brand-avatar">${initials}</div>
+        <div>
+          <div class="brand-name">${a.brandName}</div>
+          <div class="brand-meta">${url} &middot; ${a.industry}</div>
+        </div>
+      </div>
+      <div class="brand-score-wrap">
+        <div class="brand-score" style="color:${scColor(a.overallScore)}">${a.overallScore}</div>
+        <div class="brand-score-lbl">Overall score</div>
+      </div>
+    </div>
+
+    <div class="score-row">${scHtml}</div>
+
+    <div class="priority-strip">
+      <div class="priority-icon-wrap">↑</div>
+      <div>
+        <div class="priority-lbl">Top priority for this brand</div>
+        <div class="priority-text">${a.topPriority}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">
+        <span>Audit findings</span>
+        <span>${a.findings.length} identified</span>
+      </div>
+      ${findingsHtml}
+    </div>
+
+    <div class="card">
+      <div class="card-hd">Outreach email — ready to send</div>
+      <div class="email-subj">
+        <span class="email-subj-lbl">Subject</span>
+        <span class="email-subj-val">${a.outreachEmail.subject}</span>
+      </div>
+      <div class="email-body-wrap">
+        <div class="email-body" id="emailBody">${a.outreachEmail.body}</div>
+      </div>
+      <div class="email-actions">
+        <button class="btn primary" id="copyBtn" onclick="copyEmail()">Copy email</button>
+        <button class="btn" onclick="resetAudit()">New audit</button>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Note:</strong> This is a proof-of-concept prototype demonstrating the AuditIQ pipeline end to end. The production version would run inside n8n with Monday.com webhook triggers, real-time web scraping, and branded PDF generation — but the core logic is the same: URL in, scored audit out, outreach email ready. Zero manual steps.
+    </div>`;
+
+  document.getElementById('results').className = 'results show';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyEmail() {
+  const t = document.getElementById('emailBody')?.textContent;
+  if (!t) return;
+  navigator.clipboard.writeText(t).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied ✓';
+    btn.className = 'btn copied';
+    setTimeout(() => { btn.textContent = 'Copy email'; btn.className = 'btn primary'; }, 2000);
+  });
+}
+
+function resetAudit() {
+  document.getElementById('results').className = 'results';
+  document.getElementById('urlInput').value = '';
+  setStep(0);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('urlInput').addEventListener('keydown', e => { if (e.key === 'Enter') runAudit(); });
+</script>
+</body>
+</html>
